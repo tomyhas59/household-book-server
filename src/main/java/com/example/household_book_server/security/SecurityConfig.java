@@ -1,5 +1,6 @@
 package com.example.household_book_server.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,16 +28,20 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable // CSRF 보호 비활성화
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/signup", "/login", "/**").permitAll() // 허용된 경로
-                        .requestMatchers("/").authenticated() // 메인 페이지는 인증 필요
+                        .requestMatchers("/api/*").permitAll() // 허용된 경로
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
-
                 .formLogin(form -> form
-                        .loginPage("/login") // 로그인 페이지 경로
-                        .loginProcessingUrl("/login") // 로그인 처리 엔드포인트, POST 요청 처리
-                        .defaultSuccessUrl("/", true) // 로그인 성공 후 리디렉션할 URL
-                        .permitAll()
+                        .loginPage("/login")
+                        .loginProcessingUrl("/api/login") // POST /login 요청을 처리
+                        .successHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            // 추가적인 응답 데이터를 JSON 형태로 설정 가능
+                        })
+                        .failureHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            // 인증 실패 시의 처리
+                        })
                 );
 
         return http.build();
@@ -47,7 +52,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // React 앱의 도메인
-        configuration.setAllowedMethods(Arrays.asList("POST","GET", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
@@ -58,6 +63,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // 비밀번호 인코딩
+        return new BCryptPasswordEncoder();
     }
 }

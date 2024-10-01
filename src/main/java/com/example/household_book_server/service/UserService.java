@@ -12,8 +12,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -31,6 +35,7 @@ public class UserService {
 
     public String authenticate(String email, String password) {
         User user = findByEmail(email);
+        System.out.println("---------" + user);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             // JWT 토큰 생성 및 반환
             return jwtUtil.generateToken(email);
