@@ -1,13 +1,10 @@
 package com.example.household_book_server.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Table(name = "users")
 public class User {
     @Id
