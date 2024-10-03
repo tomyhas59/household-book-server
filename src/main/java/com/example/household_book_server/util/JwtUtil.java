@@ -12,7 +12,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
     private String secretKey = "tmstms";
-    private int validityInMilliseconds = 3600000; // 1 hour
+    private final int validityInMilliseconds = 3600000; // 1 hour
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();

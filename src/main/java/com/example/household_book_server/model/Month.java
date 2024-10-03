@@ -13,15 +13,11 @@ public class Month {
     private Long id;
 
     private int month;
+    private int year;
     private int budget;
     private String note;
 
     @ManyToOne
-    @JoinColumn(name = "year_id")
-    private Year year;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "month", cascade = CascadeType.ALL)

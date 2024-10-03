@@ -1,8 +1,6 @@
 package com.example.household_book_server.controller;
 
 import com.example.household_book_server.model.Month;
-import com.example.household_book_server.model.User;
-import com.example.household_book_server.model.Year;
 import com.example.household_book_server.service.MonthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +17,12 @@ public class MonthController {
     @PostMapping("/saveNoteOrBudget")
     public ResponseEntity<Month> saveOrUpdateMonth(
             @RequestParam Long userId,
-            @RequestParam int yearValue,
-            @RequestParam int monthValue,
+            @RequestParam Integer year,
+            @RequestParam Integer month,
             @RequestParam(required = false) Integer budget,
             @RequestParam(required = false) String note) {
 
-        Month updatedMonth = monthService.addOrUpdateBudgetAndNote(userId, yearValue, monthValue, budget, note);
+        Month updatedMonth = monthService.createOrUpdateMonth(userId, year, month, budget, note);
 
         return ResponseEntity.ok(updatedMonth);
     }
