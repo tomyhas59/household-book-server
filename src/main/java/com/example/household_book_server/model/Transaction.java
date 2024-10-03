@@ -17,7 +17,7 @@ public class Transaction
     private String description;
 
     @ManyToOne
-    @JoinColumn(name="month")
+    @JoinColumn(name="monthId")
     private Month month;
 
     @Enumerated(EnumType.STRING)
