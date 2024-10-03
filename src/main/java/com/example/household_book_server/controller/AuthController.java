@@ -1,7 +1,6 @@
 package com.example.household_book_server.controller;
 
 import com.example.household_book_server.model.User;
-import com.example.household_book_server.repository.UserRepository;
 import com.example.household_book_server.service.UserService;
 import com.example.household_book_server.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,8 @@ public class AuthController {
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("token", token);
             userInfo.put("email", existingUser.getEmail());
-            userInfo.put("nickname", existingUser.getNickname()); // 사용자 닉네임 추가
+            userInfo.put("nickname", existingUser.getNickname());
+            userInfo.put("id",existingUser.getId());
 
             return ResponseEntity.ok(userInfo); // 사용자 정보 반환
         }
