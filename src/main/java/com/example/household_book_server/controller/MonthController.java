@@ -26,4 +26,16 @@ public class MonthController {
 
         return ResponseEntity.ok(updatedMonth);
     }
+
+    @PostMapping("/createMonth")
+    public ResponseEntity<Month> createMonth(
+            @RequestParam Long userId,
+            @RequestParam Integer year,
+            @RequestParam Integer month) {
+
+        Month updatedMonth = monthService.createMonth(userId, year, month);
+
+        return ResponseEntity.ok(updatedMonth);
+    }
+
 }

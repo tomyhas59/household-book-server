@@ -1,6 +1,7 @@
 package com.example.household_book_server.dto;
 
 import com.example.household_book_server.model.Transaction;
+import com.example.household_book_server.model.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ public class MonthDTO {
     private Integer year;
     private Integer budget;
     private String note;
-    private List<Transaction> transactions;
+    private List<TransactionDTO> transactions;
 }

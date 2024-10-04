@@ -1,5 +1,6 @@
 package com.example.household_book_server.model;
 
+import com.example.household_book_server.dto.TransactionDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,7 +21,7 @@ public class Month {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "month", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "month", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 
 

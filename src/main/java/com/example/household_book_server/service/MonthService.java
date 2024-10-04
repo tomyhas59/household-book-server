@@ -19,6 +19,7 @@ public class MonthService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Transactional
     public Month createOrUpdateMonth(Long userId, Integer year, Integer month, Integer budget, String note) {
         // User를 찾기
@@ -28,17 +29,17 @@ public class MonthService {
 
 
             // 해당 year와 month에 대한 Month 엔티티 찾기
-            Optional<Month> existingMonth = monthRepository.findByYearAndMonth(year, month);
+            Optional<Month> existingMonth = monthRepository.findByUserIdAndYearAndMonth(userId, year, month);
             if (existingMonth.isPresent()) {
                 // 기존 Month가 있다면 budget과 note를 수정
-                Month monthToUpdate = existingMonth.get();
-                if (budget != null && note == null) monthToUpdate.setBudget(budget);
-                if (budget == null && note != null) monthToUpdate.setNote(note);
+                Month monthEntity = existingMonth.get();
+                if (budget != null && note == null) monthEntity.setBudget(budget);
+                if (budget == null && note != null) monthEntity.setNote(note);
                 if (budget != null && note != null) {
-                    monthToUpdate.setBudget(budget);
-                    monthToUpdate.setNote(note);
+                    monthEntity.setBudget(budget);
+                    monthEntity.setNote(note);
                 }
-                return monthRepository.save(monthToUpdate);
+                return monthRepository.save(monthEntity);
             } else {
                 // 기존 Month가 없다면 새로운 Month 생성
                 Month newMonth = new Month();
@@ -53,4 +54,20 @@ public class MonthService {
             throw new RuntimeException("User not found");
         }
     }
+
+    public Month createMonth(Long userId, Integer year, Integer month) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            Month newMonth = new Month();
+            newMonth.setYear(year);
+            newMonth.setMonth(month);
+            newMonth.setUser(user);
+            return monthRepository.save(newMonth);
+        }
+        return null;
+    }
+
+
 }
