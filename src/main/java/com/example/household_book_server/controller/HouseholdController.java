@@ -17,15 +17,14 @@ public class HouseholdController {
 
     // userId, year, month로 Month 데이터 가져오기
     @GetMapping("/getMonth")
-    public ResponseEntity<Optional<MonthDTO>> getMonthByUserIdAndYearAndMonth(
+    public ResponseEntity<MonthDTO> getMonthByUserIdAndYearAndMonth(
             @RequestParam Long userId,
             @RequestParam Integer year,
             @RequestParam Integer month) {
 
-        Optional<MonthDTO> foundMonth = householdService.getMonthByUserIdAndYearAndMonth(userId, year, month);
-        if (foundMonth.isPresent()) {
-            return ResponseEntity.ok(foundMonth);
-        }
-        return ResponseEntity.notFound().build();
+        MonthDTO foundMonth = householdService.getMonthByUserIdAndYearAndMonth(userId, year, month);
+
+        return ResponseEntity.ok(foundMonth);
+
     }
 }

@@ -6,18 +6,18 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Transaction
-{
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int amount;
+
     private int date;
     private String description;
 
     @ManyToOne
-    @JoinColumn(name="monthId")
+    @JoinColumn(name = "monthId")
     private Month month;
 
     @Enumerated(EnumType.STRING)

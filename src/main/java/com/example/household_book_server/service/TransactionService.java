@@ -55,4 +55,43 @@ public class TransactionService {
             throw new RuntimeException("User not found");
         }
     }
+
+    @Transactional
+    public void deleteTransaction(Long userId, Long transactionId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+        if (transactionOptional.isPresent()) {
+            Transaction transaction = transactionOptional.get();
+
+            if (!transaction.getMonth().getUser().getId().equals(userId)) {
+                throw new RuntimeException("transaction does not belong to the user");
+            }
+            transactionRepository.delete(transaction);
+        }
+    }
+
+    @Transactional
+    public Transaction updateTransaction(Long userId, Long transactionId, Transaction transaction) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+
+        if (transactionOptional.isEmpty()) {
+            throw new RuntimeException("Transaction not found");
+        }
+
+        Transaction existingTransaction = transactionOptional.get();
+
+        existingTransaction.setAmount(transaction.getAmount());
+        existingTransaction.setDescription(transaction.getDescription());
+        existingTransaction.setDate(transaction.getDate());
+
+        return transactionRepository.save(existingTransaction);
+    }
+
 }
+

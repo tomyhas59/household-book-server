@@ -2,6 +2,7 @@ package com.example.household_book_server.controller;
 
 import com.example.household_book_server.model.Transaction;
 import com.example.household_book_server.service.TransactionService;
+import org.hibernate.engine.spi.Resolution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,32 @@ public class TransactionController {
             @RequestBody Transaction transaction) {
 
 
-        Transaction savedTransaction = transactionService.addTransaction(userId, monthId, transaction, year, month);
+        Transaction added = transactionService.addTransaction(userId, monthId, transaction, year, month);
 
-        if (savedTransaction != null) {
-            return ResponseEntity.ok(savedTransaction);
+        if (added != null) {
+            return ResponseEntity.ok(added);
         } else {
             return ResponseEntity.badRequest().build(); // monthId가 없을 경우 처리
         }
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteTransaction(
+            @RequestParam Long userId,
+            @RequestParam Long transactionId
+    ) {
+        try {
+            transactionService.deleteTransaction(userId, transactionId);
+            return ResponseEntity.ok("Transaction deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Transaction> updateTransaction(@RequestParam Long userId, @RequestParam Long transactionId, @RequestBody Transaction transaction) {
+        Transaction updated = transactionService.updateTransaction(userId, transactionId, transaction);
+        return ResponseEntity.ok(updated);
+    }
+
 }

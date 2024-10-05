@@ -23,14 +23,14 @@ public class HouseholdService {
     private UserRepository userRepository;
 
     // userId, year, month로 Month 데이터 가져오기
-    public Optional<MonthDTO> getMonthByUserIdAndYearAndMonth(Long userId, Integer year, Integer month) {
+    public MonthDTO getMonthByUserIdAndYearAndMonth(Long userId, Integer year, Integer month) {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             Optional<Month> monthOptional = monthRepository.findByUserIdAndYearAndMonth(userId, year, month);
             if (monthOptional.isPresent()) {
                 Month monthEntity = monthOptional.get();
 
-               MonthDTO monthDTO=new MonthDTO();
+                MonthDTO monthDTO = new MonthDTO();
 
                 monthDTO.setId(monthEntity.getId());
                 monthDTO.setMonth(monthEntity.getMonth());
@@ -52,9 +52,10 @@ public class HouseholdService {
                         }).collect(Collectors.toList());
 
                 monthDTO.setTransactions(transactionDTOs);
-                return Optional.of(monthDTO);
+                return monthDTO;
             }
         }
-        return Optional.empty();
+        return new MonthDTO(); //없을 시 빈 데이터 반환
+
     }
 }
