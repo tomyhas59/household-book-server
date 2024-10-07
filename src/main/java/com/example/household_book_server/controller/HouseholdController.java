@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,7 +16,13 @@ public class HouseholdController {
     @Autowired
     private HouseholdService householdService;
 
-    // userId, year, month로 Month 데이터 가져오기
+
+    @GetMapping("/getYear")
+    public ResponseEntity<List<MonthDTO>> getMonthsByUserIdAndYear(@RequestParam Long userId, @RequestParam Integer year) {
+        List<MonthDTO> foundMonths = householdService.getMonthsByUserIdAndYear(userId, year);
+        return ResponseEntity.ok(foundMonths);
+    }
+
     @GetMapping("/getMonth")
     public ResponseEntity<MonthDTO> getMonthByUserIdAndYearAndMonth(
             @RequestParam Long userId,
@@ -27,4 +34,5 @@ public class HouseholdController {
         return ResponseEntity.ok(foundMonth);
 
     }
+
 }

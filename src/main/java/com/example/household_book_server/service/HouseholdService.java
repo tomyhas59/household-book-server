@@ -22,7 +22,38 @@ public class HouseholdService {
     @Autowired
     private UserRepository userRepository;
 
-    // userId, year, month로 Month 데이터 가져오기
+    public List<MonthDTO> getMonthsByUserIdAndYear(Long userId, Integer year) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            List<Month> months = monthRepository.findByUserIdAndYear(userId, year);
+            return months.stream().map(month -> {
+                MonthDTO monthDTO = new MonthDTO();
+                monthDTO.setId(month.getId());
+                monthDTO.setMonth(month.getMonth());
+                monthDTO.setYear(month.getYear());
+                monthDTO.setBudget(month.getBudget());
+                monthDTO.setNote(month.getNote());
+
+                // TransactionDTO 변환
+                List<TransactionDTO> transactionDTOs = month.getTransactions().stream()
+                        .map(transaction -> {
+                            TransactionDTO transactionDTO = new TransactionDTO();
+                            transactionDTO.setId(transaction.getId());
+                            transactionDTO.setAmount(transaction.getAmount());
+                            transactionDTO.setDate(transaction.getDate());
+                            transactionDTO.setDescription(transaction.getDescription());
+                            transactionDTO.setType(transaction.getType());
+                            transactionDTO.setMonthId(transaction.getMonth().getId());
+                            return transactionDTO;
+                        }).collect(Collectors.toList());
+
+                monthDTO.setTransactions(transactionDTOs);
+                return monthDTO;
+            }).collect(Collectors.toList());
+        }
+        return List.of(); //없을 시 빈 리스트 반환
+    }
+
     public MonthDTO getMonthByUserIdAndYearAndMonth(Long userId, Integer year, Integer month) {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
