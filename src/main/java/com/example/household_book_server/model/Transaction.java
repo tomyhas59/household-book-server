@@ -1,6 +1,7 @@
 package com.example.household_book_server.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "monthId")
+    @JsonBackReference // 순환 참조 방지
     private Month month;
 
     @Enumerated(EnumType.STRING)

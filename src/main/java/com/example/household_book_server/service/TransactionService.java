@@ -2,6 +2,7 @@ package com.example.household_book_server.service;
 
 import com.example.household_book_server.model.Month;
 import com.example.household_book_server.model.Transaction;
+import com.example.household_book_server.model.TransactionType;
 import com.example.household_book_server.model.User;
 import com.example.household_book_server.repository.MonthRepository;
 import com.example.household_book_server.repository.TransactionRepository;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -93,5 +97,34 @@ public class TransactionService {
         return transactionRepository.save(existingTransaction);
     }
 
+    @Transactional
+    public void deleteAllTransactions(Long userId, Long monthId, String type) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+        TransactionType transactionType = TransactionType.fromString(type);
+        List<Transaction> transactions = transactionRepository.findByMonthIdAndType(monthId, transactionType);
+
+        transactionRepository.deleteAll(transactions);
+    }
+
+    @Transactional
+    public List<Transaction> getTransactions(Long userId, Integer month, Integer year, String type) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+        Optional<Month> prevMonthOptional = monthRepository.findByUserIdAndYearAndMonth(userId, year, month);
+        if (prevMonthOptional.isPresent()) {
+            Month prevMonth = prevMonthOptional.get();
+            TransactionType transactionType = TransactionType.fromString(type);
+            List<Transaction> prevTransactions = transactionRepository.findByMonthIdAndType(prevMonth.getId(), transactionType);
+
+
+            if (!prevTransactions.isEmpty()) {
+                return prevTransactions;
+            }
+        }
+        return Collections.emptyList();
+    }
 }
 

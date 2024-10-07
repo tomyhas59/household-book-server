@@ -1,11 +1,14 @@
 package com.example.household_book_server.controller;
 
 import com.example.household_book_server.model.Transaction;
+import com.example.household_book_server.model.TransactionType;
 import com.example.household_book_server.service.TransactionService;
 import org.hibernate.engine.spi.Resolution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -38,12 +41,10 @@ public class TransactionController {
             @RequestParam Long userId,
             @RequestParam Long transactionId
     ) {
-        try {
-            transactionService.deleteTransaction(userId, transactionId);
-            return ResponseEntity.ok("Transaction deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+        transactionService.deleteTransaction(userId, transactionId);
+        return ResponseEntity.ok("Transaction deleted successfully");
+
     }
 
     @PutMapping("/update")
@@ -52,4 +53,16 @@ public class TransactionController {
         return ResponseEntity.ok(updated);
     }
 
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllTransactions(@RequestParam Long userId, @RequestParam Long monthId, @RequestParam String type) {
+        transactionService.deleteAllTransactions(userId, monthId, type);
+        return ResponseEntity.ok("Transaction deleted successfully");
+    }
+
+    @GetMapping("/getTransactions")
+    public ResponseEntity<List<Transaction>> getTransactions(@RequestParam Long userId, @RequestParam Integer month, @RequestParam Integer year, @RequestParam String type) {
+        List<Transaction> transactions = transactionService.getTransactions(userId, month, year, type);
+
+        return ResponseEntity.ok(transactions);
+    }
 }
