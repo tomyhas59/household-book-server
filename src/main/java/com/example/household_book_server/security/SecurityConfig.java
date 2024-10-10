@@ -2,6 +2,7 @@ package com.example.household_book_server.security;
 
 import com.example.household_book_server.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,11 +46,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Value("${cors.allowed-origin}")
+    private String allowedOrigin;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("http://localhost:3000"); // 필요한 도메인으로 제한
+        configuration.addAllowedOrigin(allowedOrigin); // 필요한 도메인으로 제한
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
 
