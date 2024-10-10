@@ -32,7 +32,7 @@ public class TransactionController {
         if (added != null) {
             return ResponseEntity.ok(added);
         } else {
-            return ResponseEntity.badRequest().build(); // monthId가 없을 경우 처리
+            return ResponseEntity.badRequest().build();
         }
     }
 
