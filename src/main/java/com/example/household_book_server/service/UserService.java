@@ -20,6 +20,16 @@ public class UserService {
     }
 
     public void register(User user) {
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이메일이 이미 존재합니다.");
+        }
+
+        if (userRepository.findByNickname(user.getNickname()).isPresent()) {
+            throw new IllegalArgumentException("닉네임이 이미 존재합니다.");
+        }
+
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
