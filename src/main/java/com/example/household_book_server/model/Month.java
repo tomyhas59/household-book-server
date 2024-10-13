@@ -1,6 +1,5 @@
 package com.example.household_book_server.model;
 
-import com.example.household_book_server.dto.TransactionDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
