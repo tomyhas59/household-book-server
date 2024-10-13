@@ -1,7 +1,5 @@
 package com.example.household_book_server.security;
 
-import com.example.household_book_server.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
