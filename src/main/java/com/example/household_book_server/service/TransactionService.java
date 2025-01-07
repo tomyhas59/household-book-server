@@ -93,6 +93,7 @@ public class TransactionService {
         existingTransaction.setAmount(transaction.getAmount());
         existingTransaction.setDescription(transaction.getDescription());
         existingTransaction.setDate(transaction.getDate());
+        existingTransaction.setType(transaction.getType());
 
         return transactionRepository.save(existingTransaction);
     }
