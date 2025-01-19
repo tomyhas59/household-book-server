@@ -44,18 +44,20 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Value("${cors.allowed-origin}")
+    @Value("${cors.allowed-origin}") //허용된 프론트 주소
     private String allowedOrigin;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin(allowedOrigin); // 필요한 도메인으로 제한
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);  // 자격 증명(쿠키 등)을 허용
+        configuration.addAllowedOrigin(allowedOrigin); // 허용할 도메인
+        configuration.addAllowedHeader("*"); // 모든 헤더를 허용
+        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드를 허용
 
+        // CORS 설정을 특정 URL 패턴에 적용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 설정 적용
         return source;
     }
 }
