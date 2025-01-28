@@ -1,5 +1,6 @@
 package com.example.household_book_server.controller;
 
+import com.example.household_book_server.dto.ChangePasswordDTO;
 import com.example.household_book_server.model.User;
 import com.example.household_book_server.service.UserService;
 import com.example.household_book_server.util.JwtUtil;
@@ -55,4 +56,20 @@ public class AuthController {
         // 로그인 실패 시 401 Unauthorized 상태 코드와 메시지 반환
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
     }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO data) {
+        try {
+            String email = data.getEmail();
+            String prevPassword = data.getPrevPassword();
+            String newPassword = data.getNewPassword();
+            userService.changePassword(email, prevPassword, newPassword);
+            return ResponseEntity.ok("비밀번호 변경 성공");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
+
 }
