@@ -37,24 +37,28 @@ public class AuthController {
     public ResponseEntity<Object> login(@RequestBody User user) {
         // 사용자 이메일로 기존 사용자 검색
         User existingUser = userService.findByEmail(user.getEmail());
-
-        // 사용자 존재 여부 및 패스워드 일치 여부 확인
-        if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            // 패스워드가 일치하면 JWT 토큰 생성
-            String token = jwtUtil.generateToken(existingUser.getEmail());
-
-            // 사용자 정보를 담을 Map 객체 생성
-            Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("token", token); // JWT 토큰
-            userInfo.put("email", existingUser.getEmail()); // 사용자 이메일
-            userInfo.put("nickname", existingUser.getNickname()); // 사용자 닉네임
-            userInfo.put("id", existingUser.getId()); // 사용자 ID
-
-            return ResponseEntity.ok(userInfo); // 사용자 정보와 함께 응답 반환
+        if (existingUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("없는 이메일입니다.");
+        }
+        // 패스워드 일치 여부 확인
+        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 다릅니다.");
         }
 
-        // 로그인 실패 시 401 Unauthorized 상태 코드와 메시지 반환
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
+
+        // 패스워드가 일치하면 JWT 토큰 생성
+        String token = jwtUtil.generateToken(existingUser.getEmail());
+
+        // 사용자 정보를 담을 Map 객체 생성
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("token", token); // JWT 토큰
+        userInfo.put("email", existingUser.getEmail()); // 사용자 이메일
+        userInfo.put("nickname", existingUser.getNickname()); // 사용자 닉네임
+        userInfo.put("id", existingUser.getId()); // 사용자 ID
+
+        return ResponseEntity.ok(userInfo); // 사용자 정보와 함께 응답 반환
+
+
     }
 
     @PostMapping("/changePassword")
