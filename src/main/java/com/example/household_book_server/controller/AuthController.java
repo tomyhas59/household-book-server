@@ -59,15 +59,12 @@ public class AuthController {
 
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO data) {
-        try {
+
             String email = data.getEmail();
             String prevPassword = data.getPrevPassword();
             String newPassword = data.getNewPassword();
             userService.changePassword(email, prevPassword, newPassword);
             return ResponseEntity.ok("비밀번호 변경 성공");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
 
     }
 
