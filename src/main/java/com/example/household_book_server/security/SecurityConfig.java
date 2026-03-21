@@ -1,5 +1,6 @@
 package com.example.household_book_server.security;
 
+import com.example.household_book_server.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,22 +21,25 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtil jwtUtil) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll()  // 회원가입 및 로그인은 인증 없이 접근 가능
-                        .anyRequest().authenticated()  // 나머지 요청은 인증 필요
-                );
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated())
+                // 🔥 여기 추가 (핵심)
+                .addFilterBefore(
+                        new JwtFilter(jwtUtil),
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder authenticationManagerBuilder = http
+                .getSharedObject(AuthenticationManagerBuilder.class);
         return authenticationManagerBuilder.build();
     }
 
@@ -44,20 +48,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Value("${cors.allowed-origin}") //허용된 프론트 주소
+    @Value("${cors.allowed-origin}")
     private String allowedOrigin;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);  // 자격 증명(쿠키 등)을 허용
-        configuration.addAllowedOrigin(allowedOrigin); // 허용할 도메인
-        configuration.addAllowedHeader("*"); // 모든 헤더를 허용
-        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드를 허용
+        configuration.setAllowCredentials(true);
+        configuration.addAllowedOrigin(allowedOrigin);
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
 
-        // CORS 설정을 특정 URL 패턴에 적용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 설정 적용
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
